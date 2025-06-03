@@ -72,12 +72,16 @@ const register = async (req, res) => {
 
 
 const verifyEmail = async (req, res) => {
-  const { token } = req.query;
+  const { token } = req.params;
+
+  if (!token) {
+    return res.redirect(`${process.env.CLIENT_URL}/login?status=invalid_token`);
+  }
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const userId = decoded.id;
+    const user = await UserRepository.findById(decoded.id);
 
-    const user = await UserRepository.findById(userId);
     if (!user) {
       return res.redirect(`${process.env.CLIENT_URL}/login?status=user_not_found`);
     }
@@ -87,13 +91,14 @@ const verifyEmail = async (req, res) => {
     }
 
     user.isVerified = true;
-    await user.save();
-
+    await UserRepository.saveUser(user); // utilisez UserRepository pour la cohérence
     return res.redirect(`${process.env.CLIENT_URL}/login?status=verified`);
-  } catch (err) {
+  } catch (error) {
+    console.error("Erreur lors de la vérification de l'email:", error);
     return res.redirect(`${process.env.CLIENT_URL}/login?status=invalid_token`);
   }
 };
+
 
 
 // @desc Connexion user

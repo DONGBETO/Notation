@@ -1,32 +1,32 @@
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import React, { useEffect, useState } from "react";
 
-// const avisCards = [
-//   {
-//     id: 1,
-//     title: "Évaluez facilement",
-//     description:
-//       "Donnez rapidement une note claire sur la qualité des services que vous avez utilisés.",
-//     image:
-//       "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
-//   },
-//   {
-//     id: 2,
-//     title: "Exprimez-vous librement",
-//     description:
-//       "Rédigez des commentaires détaillés pour partager votre expérience avec précision.",
-//     image:
-//       "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=600&q=80",
-//   },
-//   {
-//     id: 3,
-//     title: "Contribuez à la communauté",
-//     description:
-//       "Aidez d’autres utilisateurs à faire les meilleurs choix grâce à vos avis honnêtes.",
-//     image:
-//       "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80",
-//   },
-// ];
+const avisCards = [
+  {
+    id: 1,
+    title: "Évaluez facilement",
+    description:
+      "Donnez rapidement une note claire sur la qualité des services que vous avez utilisés.",
+    image:
+      "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 2,
+    title: "Exprimez-vous librement",
+    description:
+      "Rédigez des commentaires détaillés pour partager votre expérience avec précision.",
+    image:
+      "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=600&q=80",
+  },
+  {
+    id: 3,
+    title: "Contribuez à la communauté",
+    description:
+      "Aidez d’autres utilisateurs à faire les meilleurs choix grâce à vos avis honnêtes.",
+    image:
+      "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=600&q=80",
+  },
+];
 
 // // Nouveau tableau de cartes pour la deuxième section
 // const featureCards = [

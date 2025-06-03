@@ -20,10 +20,14 @@ const DevenirService = () => {
   }, [navigate]);
 
   const handleChange = (e) => {
-  if (files && files[0]) {
-  const file = files[0];
-  setFormData((prev) => ({ ...prev, photo: file }));
-  setPreview(URL.createObjectURL(file));
+    const { name, value, files } = e.target;
+
+    if (name === "photo" && files && files[0]) {
+      const file = files[0];
+      setFormData((prev) => ({ ...prev, photo: file }));
+      setPreview(URL.createObjectURL(file));
+    } else {
+      setFormData((prev) => ({ ...prev, [name]: value }));
     }
   };
 
@@ -65,16 +69,17 @@ const DevenirService = () => {
       const result = await res.json();
 
       if (res.ok) {
-        setMessage(" Service enregistré avec succès !");
+        setMessage("Service enregistré avec succès !");
         setFormData({ nom_entreprise: "", desc_service: "", numero: "", photo: null });
+        setPreview(null);
         setErrors({});
         setTimeout(() => navigate("/"), 2000);
       } else {
-        setMessage(result.message || " Erreur lors de l'enregistrement.");
+        setMessage(result.message || "Erreur lors de l'enregistrement.");
       }
     } catch (error) {
       console.error(error);
-      setMessage(" Une erreur s'est produite.");
+      setMessage("Une erreur s'est produite.");
     }
   };
 
@@ -155,9 +160,9 @@ const DevenirService = () => {
             />
 
             {preview && (
-            <div className="mt-4">
-              <img src={preview} alt="Aperçu" className="h-40 object-cover rounded shadow-md" />
-            </div>
+              <div className="mt-4">
+                <img src={preview} alt="Aperçu" className="h-40 object-cover rounded shadow-md" />
+              </div>
             )}
           </div>
 
@@ -175,3 +180,4 @@ const DevenirService = () => {
 };
 
 export default DevenirService;
+     
