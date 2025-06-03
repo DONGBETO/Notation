@@ -29,7 +29,7 @@ router.get("/:id", getServiceById);
 router.put(
   "/:id",
   tokenCheck,
-  upload.single("photo"),
+  upload.single("photo_couverture"),
   validateService,
   updateService
 );

@@ -1,35 +1,34 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+// src/App.jsx
+import React from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/Auth/loginForm";
+import Register from "./components/Auth/registerForm";
+import Home from "./pages/Home"; // page d’accueil ou tableau de bord
+import Navbar from "./components/Navbar";
+import DonnerAvis from "./pages/donnerAvis";
+import DevenirService from "./pages/devenirService";
+import ErrorBoundary from "./components/error";
+import VerifyEmail from "./components/verifyEmail"
+// import ServiceDetails from './pages/serviceDetail';
+
+
 
 function App() {
-  const [count, setCount] = useState(0)
-
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <Router>
+      <Navbar />
+      <ErrorBoundary>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/donner-avis" element={<DonnerAvis />} />
+        { <Route path="/devenir-service" element={<DevenirService />} /> }
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/verify-email" element={<VerifyEmail />} />
+      </Routes>
+      </ErrorBoundary>
+    </Router>
+  );
 }
 
-export default App
+export default App;

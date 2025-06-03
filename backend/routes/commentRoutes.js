@@ -15,4 +15,9 @@ router.put("/:commentId", tokenCheck, commentController.updateComment);
 // Supprimer un commentaire (auteur ou admin)
 router.delete("/:commentId", tokenCheck, commentController.deleteComment);
 
+//Dernier commentaire sur un service
+router.get('/last/:serviceId', commentController.getLastCommentByService);
+
+// router.get("/data.json", commentController.generateJsonData);
+
 module.exports = router;

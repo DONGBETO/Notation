@@ -39,13 +39,12 @@ const register = async (req, res) => {
          { expiresIn: "1d" }
       );
 
-      const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${emailToken}`;
+         const verificationUrl = `${process.env.CLIENT_URL}/verify-email?token=${emailToken}`;
 
-      // Envoi du mail de vérification
-      await EmailService.sendVerificationEmail(email, firstName, verificationUrl);
+         await EmailService.sendVerificationEmail(email, firstName, verificationUrl);
 
       // Envoi du mail de bienvenue
-      await EmailService.sendWelcomeEmail(firstName, lastName, email);
+      // await EmailService.sendWelcomeEmail(firstName, lastName, email);
 
       // Réponse seulement à la fin
       res.status(200).send({
@@ -73,38 +72,29 @@ const register = async (req, res) => {
 
 
 const verifyEmail = async (req, res) => {
-   const token = req.query.token;
+  const { token } = req.query;
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = decoded.id;
 
-   if (!token) {
-      return res.status(400).json({ message: "Token manquant." });
-   }
+    const user = await UserRepository.findById(userId);
+    if (!user) {
+      return res.redirect(`${process.env.CLIENT_URL}/login?status=user_not_found`);
+    }
 
-   try {
-      // Vérifie le token
-      const decoded = jwt.verify(token, process.env.JWT_SECRET);
-      const userId = decoded.id;
+    if (user.isVerified) {
+      return res.redirect(`${process.env.CLIENT_URL}/login?status=already_verified`);
+    }
 
-      // Cherche l'utilisateur
-      const user = await UserRepository.findById(userId);
-      if (!user) {
-         return res.status(404).json({ message: "Utilisateur introuvable." });
-      }
+    user.isVerified = true;
+    await user.save();
 
-      // Vérifie s'il est déjà validé
-      if (user.isVerified) {
-         return res.status(200).json({ message: "Email déjà vérifié." });
-      }
-
-      // Met à jour l'utilisateur
-      user.isVerified = true;
-      await UserRepository.saveUser(user); // ou user.save() selon ton repo
-
-      res.status(200).json({ message: "Email vérifié avec succès !" });
-
-   } catch (error) {
-      res.status(400).json({ message: "Token invalide ou expiré.", error: error.message });
-   }
+    return res.redirect(`${process.env.CLIENT_URL}/login?status=verified`);
+  } catch (err) {
+    return res.redirect(`${process.env.CLIENT_URL}/login?status=invalid_token`);
+  }
 };
+
 
 // @desc Connexion user
 // @route POST /api/authenticate/login

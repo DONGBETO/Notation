@@ -1,0 +1,12 @@
+# Ignorer node_modules dans le dossier frontend et backend
+frontend/node_modules/
+backend/node_modules/
+
+# Ignorer le fichier .env dans le dossier backend
+backend/.env
+
+# Ignorer le dossier uploads dans le dossier backend
+backend/.env
+
+backend/uploads/
+

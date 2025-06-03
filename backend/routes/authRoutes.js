@@ -9,7 +9,9 @@ const upload = require("../middlewares/uploadMiddleware");
 //inscription
 router.post("/register", registerSchema, authentificate.register);
 //verify link register
+// router.get("/verify-email", registerSchema, authentificate.verifyEmail);
 router.get("/verify-email", registerSchema, authentificate.verifyEmail);
+
 //connexion
 router.post("/login", loginSchema, authentificate.login);
 //gestion du profile 

@@ -1,5 +1,7 @@
 const ServiceRepository = require("../repositories/serviceRepository");
 const UserRepository = require("../repositories/userRepository");
+const Service = require('../models/serviceModel');
+const Commentaire = require('../models/Comment');
 
 //  Créer un service
 const createService = async (req, res) => {
@@ -44,22 +46,41 @@ const createService = async (req, res) => {
 };
 
 
-// Obtenir tous les services
 const getAllServices = async (req, res) => {
-   try {
-      const services = await ServiceRepository.findAllServices();
-      res.status(200).json({
-         success: true,
-         services,
-      });
-   } catch (error) {
-      res.status(500).json({
-         success: false,
-         message: "Erreur lors de la récupération des services.",
-         error: error.message,
-      });
-   }
+  try {
+    const services = await Service.find(); // ou ServiceRepository.findAllServices() si tu utilises un repo
+
+    // Récupérer pour chaque service son dernier commentaire
+    const servicesWithLastComment = await Promise.all(
+      services.map(async (service) => {
+        const lastComment = await Commentaire.findOne({ service: service._id })
+          .populate("user", "firstName") // adapte le nom du champ s'il est différent
+          .sort({ createdAt: -1 });
+
+        return {
+          _id: service._id,
+          nom_entreprise: service.nom_entreprise,
+          photo: service.photo,
+          description: lastComment ? lastComment.commentaire : "Pas encore de commentaire",
+          author: lastComment?.user?.firstName || "Anonyme",
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      services: servicesWithLastComment,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Erreur lors de la récupération des services.",
+      error: error.message,
+    });
+  }
 };
+
+
 
 // Obtenir un service par ID
 const getServiceById = async (req, res) => {
