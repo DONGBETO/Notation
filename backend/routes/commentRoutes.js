@@ -1,5 +1,5 @@
 const express = require("express");
-const router = express.Router({ mergeParams: true });
+const router = express.Router({ mergeParams: true }); // important pour récupérer :serviceId
 const { tokenCheck } = require("../middlewares/authMiddleware");
 const commentController = require("../controllers/commentController");
 
@@ -15,9 +15,7 @@ router.put("/:commentId", tokenCheck, commentController.updateComment);
 // Supprimer un commentaire (auteur ou admin)
 router.delete("/:commentId", tokenCheck, commentController.deleteComment);
 
-//Dernier commentaire sur un service
+// Dernier commentaire sur un service
 router.get('/last/:serviceId', commentController.getLastCommentByService);
-
-// router.get("/data.json", commentController.generateJsonData);
 
 module.exports = router;

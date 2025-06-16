@@ -4,94 +4,99 @@ const fs = require("fs");
 const path = require("path");
 
 exports.createComment = async (req, res) => {
-   try {
-      const { serviceId } = req.params;
-      const { content } = req.body;
-      const userId = req.user.id;
+  try {
+    const { serviceId } = req.params;
+    const { content, rating } = req.body; // récupère aussi la note
+    const userId = req.user.id;
 
-      const service = await Service.findById(serviceId);
-      if (!service) {
-         return res.status(404).json({ success: false, message: "Service non trouvé." });
-      }
+    const service = await Service.findById(serviceId);
+    if (!service) {
+      return res.status(404).json({ success: false, message: "Service non trouvé." });
+    }
 
-      const comment = await Comment.create({
-         content,
-         serviceId,
-         createdBy: userId,
-      });
+    const comment = await Comment.create({
+      content,
+      rating,
+      serviceId,
+      createdBy: userId,
+    });
 
-      res.status(201).json({ success: true, comment });
-   } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-   }
+    res.status(201).json({ success: true, comment });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.getCommentsByService = async (req, res) => {
-   try {
-      const { serviceId } = req.params;
-      const comments = await Comment.find({ serviceId }).populate("createdBy", "nom email");
+  try {
+    const { serviceId } = req.params;
+    const comments = await Comment.find({ serviceId }).populate("createdBy", "firstName lastName");
 
-      res.status(200).json({ success: true, count: comments.length, comments });
-   } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-   }
+    res.status(200).json({ success: true, count: comments.length, comments });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.updateComment = async (req, res) => {
-   try {
-      const { commentId } = req.params;
-      const { content } = req.body;
-      const userId = req.user.id;
-      const userRole = req.user.roleName;
+  try {
+    const { commentId } = req.params;
+    const { content, rating } = req.body; // prend en compte rating aussi
+    const userId = req.user.id;
+    const userRole = req.user.roleName;
 
-      const comment = await Comment.findById(commentId);
-      if (!comment) {
-         return res.status(404).json({ success: false, message: "Commentaire non trouvé." });
-      }
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ success: false, message: "Commentaire non trouvé." });
+    }
 
-      if (comment.createdBy.toString() !== userId && userRole !== "admin") {
-         return res.status(403).json({ success: false, message: "Accès refusé." });
-      }
+    if (comment.createdBy.toString() !== userId && userRole !== "admin") {
+      return res.status(403).json({ success: false, message: "Accès refusé." });
+    }
 
-      comment.content = content;
-      await comment.save();
+    comment.content = content;
+    if (rating !== undefined) {
+      comment.rating = rating;
+    }
 
-      res.status(200).json({ success: true, comment });
-   } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-   }
+    await comment.save();
+
+    res.status(200).json({ success: true, comment });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.deleteComment = async (req, res) => {
-   try {
-      const { commentId } = req.params;
-      const userId = req.user.id;
-      const userRole = req.user.roleName;
+  try {
+    const { commentId } = req.params;
+    const userId = req.user.id;
+    const userRole = req.user.roleName;
 
-      const comment = await Comment.findById(commentId);
-      if (!comment) {
-         return res.status(404).json({ success: false, message: "Commentaire non trouvé." });
-      }
+    const comment = await Comment.findById(commentId);
+    if (!comment) {
+      return res.status(404).json({ success: false, message: "Commentaire non trouvé." });
+    }
 
-      if (comment.createdBy.toString() !== userId && userRole !== "admin") {
-         return res.status(403).json({ success: false, message: "Accès refusé." });
-      }
+    if (comment.createdBy.toString() !== userId && userRole !== "admin") {
+      return res.status(403).json({ success: false, message: "Accès refusé." });
+    }
 
-      await comment.deleteOne();
+    await comment.deleteOne();
 
-      res.status(200).json({ success: true, message: "Commentaire supprimé." });
-   } catch (error) {
-      res.status(500).json({ success: false, message: error.message });
-   }
+    res.status(200).json({ success: true, message: "Commentaire supprimé." });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 exports.getLastCommentByService = async (req, res) => {
   try {
     const { serviceId } = req.params;
 
-    // Trouver le commentaire le plus récent pour le service donné
-    const lastComment = await Comment.findOne({ service: serviceId })
-      .populate("user", "firstName lastName") // Adapté selon ton modèle
+    // Correction : rechercher avec serviceId et populate createdBy
+    const lastComment = await Comment.findOne({ serviceId })
+      .populate("createdBy", "firstName lastName")
       .sort({ createdAt: -1 });
 
     if (!lastComment) {
@@ -105,7 +110,7 @@ exports.getLastCommentByService = async (req, res) => {
   }
 };
 
-
+// (optionnel) export générer JSON commenté, inchangé, à décommenter si besoin
 // exports.generateJsonData = async (req, res) => {
 //   try {
 //     const services = await Service.find();
@@ -135,4 +140,3 @@ exports.getLastCommentByService = async (req, res) => {
 //     res.status(500).json({ success: false, message: error.message });
 //   }
 // };
-

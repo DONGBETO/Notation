@@ -143,6 +143,7 @@ const login = async (req, res) =>{
 // @route POST /api/authenticate/Profile
 // @access Private (Requiert le JWT, pas de role)
 const getUserProfile = async (req, res) =>{
+     console.log("User from token:", req.user);
    const userId = req.user.id;
    try{ 
       const result = await UserRepository.findById(userId).select("-password");

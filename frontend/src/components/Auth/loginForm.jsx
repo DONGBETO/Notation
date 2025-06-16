@@ -102,6 +102,7 @@ const Login = () => {
         setServerError(data.message || "Erreur lors de la connexion.");
       } else {
         localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user)); // <-- Sauvegarde de l'utilisateur
         alert("Connexion réussie !");
         navigate("/");
       }

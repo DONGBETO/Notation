@@ -8,7 +8,9 @@ import Navbar from "./components/Navbar";
 import DonnerAvis from "./pages/donnerAvis";
 import DevenirService from "./pages/devenirService";
 import ErrorBoundary from "./components/error";
-import VerifyEmail from "./components/verifyEmail"
+import VerifyEmail from "./components/verifyEmail";
+import ServiceDetail from "./pages/ServiceDetail"; 
+
 // import ServiceDetails from './pages/serviceDetail';
 
 
@@ -21,6 +23,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/donner-avis" element={<DonnerAvis />} />
+            <Route path="/service/:id" element={<ServiceDetail />} />
         { <Route path="/devenir-service" element={<DevenirService />} /> }
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
